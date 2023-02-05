@@ -1,0 +1,4 @@
+@transcript
+load "QCheck";
+QCheck.pred;
+@end transcript

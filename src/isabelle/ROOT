@@ -1,0 +1,32 @@
+chapter Local
+session "MDP-Rewards-local" in rewards = "HOL-Probability" +
+  options [document = pdf, document_output = "output"]
+  theories
+    MDP_reward
+  document_files
+    "root.bib"
+    "root.tex"
+
+chapter Local
+session "MDP-Algorithms-local" in algorithms = "MDP-Rewards-local" +
+  options [document = pdf, document_output = "output"]
+  sessions
+    Gauss_Jordan Jordan_Normal_Form Perron_Frobenius "HOL-Data_Structures"
+  directories
+    code
+    "code/lib"
+  theories
+    VI_Code_Export_Float
+    VI_Code_Export_Rat
+    GS_Code_Export_Float
+    GS_Code_Export_Rat
+    MPI_Code_Export_Float
+    MPI_Code_Export_Rat
+    PI_Code_Export_Float
+    PI_Code_Export_Rat
+    Fin_Code_Export_Float
+    Fin_Code_Export_Rat
+
+  document_files
+    "root.bib"
+    "root.tex"
