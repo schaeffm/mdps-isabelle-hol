@@ -1,1 +1,1 @@
-( cd src/rust_solver && ./build.sh )
+( cd rust_solver && ./build.sh )

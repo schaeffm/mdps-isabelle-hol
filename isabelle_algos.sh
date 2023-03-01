@@ -1,1 +1,1 @@
-isabelle jedit -d ./src/isabelle -l MDP-Algorithms-local
+isabelle jedit -d ./src/isabelle -l MDP-Algorithms

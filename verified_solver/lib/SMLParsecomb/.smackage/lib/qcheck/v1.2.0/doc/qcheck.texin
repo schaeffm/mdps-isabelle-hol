@@ -1,0 +1,453 @@
+\input texinfo  @c -*- texinfo -*-
+@c %**start of header
+@setfilename qcheck.info
+@settitle QCheck/SML
+@syncodeindex tp cp
+@syncodeindex fn cp
+@c %**end of header
+@include doc/qcheck-ver.texi
+@macro aboutthismanual
+Copyright @copyright{} 2007 Christopher League.
+
+This manual describes QCheck/SML (version @value{VERSION}), an
+automatic testing library for Standard ML.  It is modeled after the
+QuickCheck library for Haskell (ICFP 2000) by Koen Claessen and John
+Hughes, with many thanks.  QCheck/SML (including this manual) is free
+software.  You may redistribute and/or modify it under the terms of
+the GNU Lesser General Public License (LGPL) as published by the Free
+Software Foundation.  @xref{License}.
+
+@itemize
+@item Main web page: @url{http://contrapunctus.net/league/haques/qcheck/}
+@item Bundled releases: @url{http://comsci.liu.edu/~league/dist/qcheck/}
+@item RSS feed: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=rss}
+@item Browse repo.: @url{http://comsci.liu.edu/darcsweb/darcsweb.cgi?r=qcheck/trunk;a=summary}
+@item Checkout: @code{darcs get http://comsci.liu.edu/~league/dist/qcheck/trunk qcheck}
+@end itemize
+@end macro
+
+@titlepage
+@title QCheck/SML
+@subtitle An automatic testing library for Standard ML
+@subtitle version @value{VERSION}
+@author Christopher League @email{league@@contrapunctus.net}
+@page
+@vskip 0pt plus1filll
+@aboutthismanual{}
+@end titlepage
+@setchapternewpage off
+@headings double
+
+@contents
+
+@ifnottex
+@node Top, Overview, (dir), (dir)
+@top QCheck/SML
+@aboutthismanual{}
+
+
+@menu
+* Overview::                    What is QCheck?
+* Installation::                How do I build and install it?
+* Specifying test cases::       QCheck can extract cases from files.
+* Generating test cases::       Test cases can be randomly generated.
+* Properties::                  Specifying properties to be tested.
+* Settings::                    Many settings are configurable.
+* Release notes::               Summary of user-visible changes.
+* License::                     GNU Lesser General Public License.
+* Index::                       
+@end menu
+
+@end ifnottex
+
+@node Overview, Installation, Top, Top
+@chapter Overview
+
+@c Use this to autoload everything in advance; otherwise we get
+@c [autoloading] messages in the output.
+@transcript omit
+Int.toString;
+List.getItem;
+@end transcript
+
+QCheck is a library for automatic unit testing of Standard ML modules.
+You provide specifications (in the form of ML code) of the properties
+that your module's functions should satisfy, and ask QCheck to
+exercise the module with randomly-chosen test cases.  It will show how
+many cases passed the test, and print counter-examples in case of
+failure.  Actually, random testing is just one possibility;
+QCheck can pull test cases from any kind of stream (disk file, data
+structure, etc.)
+
+@section Simple properties of integers
+
+The best way to demonstrate the capabilities of QCheck is with a
+simple example.  Let's begin by writing a few tiny functions on
+integers: successor, even, and odd:
+
+@transcript
+fun succ x = x+1
+fun even x = x mod 2 = 0
+fun odd x = x mod 2 = 1
+@end transcript
+
+@noindent
+Now we need to think of a property that we expect to hold for this
+implementation.  Here is a trivial one: every integer is @emph{either}
+even or odd.  That is, for any @code{x} exactly @emph{one} of the
+functions @code{even} or @code{odd} returns true; the other returns
+false.  One way to specify this in ML is to use @code{<>} (not
+equal), which amounts to an exclusive OR when applied to boolean
+values.
+
+@transcript
+fun even_xor_odd x = even x <> odd x
+@end transcript
+
+@cindex polymorphic
+@cindex counter-example
+@noindent
+We now call upon QCheck to test this property on a bunch of randomly
+chosen integers.  QCheck checkers are polymorphic.  To test integers,
+we'll have to specify two things: a @emph{generator} that produces
+integers, and a @emph{printer} that can convert integers to strings
+(in case there are counter-examples to be printed).
+
+@transcript quiet
+open QCheck infix ==>
+@end transcript
+@transcript 
+val int = (Gen.Int.int, SOME Int.toString)
+@end transcript
+
+@noindent
+Finally, we call @code{checkGen} with the @code{int} spec, a string
+to identify the test, and the property we are testing.
+
+@transcript
+checkGen int ("even<>odd", pred even_xor_odd);
+@end transcript
+
+@noindent
+The output indicates that QCheck tested the property on 100 random
+integers, and all of them succeeded.  (The number of cases required to
+complete the test is configurable.  @xref{Settings}.)
+
+@cindex conditional
+For the next example, we will demonstrate a @emph{conditional}
+property: the successor of any even number should be odd.
+
+@transcript
+val succ_even_odd = even ==> odd o succ
+@end transcript
+
+@transcript
+checkGen int ("even+1=odd", succ_even_odd);
+@end transcript
+
+@noindent
+In this example, the 100 test cases that passed were all ones that met
+the condition: they were all even.  Odd numbers trivially
+satisfy the property (by falsifying the condition) and are not counted.
+
+Now, let's try the inverse property: the successor of an odd number
+should be even:
+
+@transcript
+checkGen int ("odd+1=even", odd ==> even o succ);
+@end transcript
+
+@cindex boundary condition
+@noindent
+Oops!  QCheck found a counter-example: the maximum 31-bit integer.  It
+is odd, but since its successor is undefined, the property does not
+hold.  (We were not extraordinarily lucky to generate @code{maxInt} this time
+around; in fact, the generator is biased so that zero, @code{minInt}, and
+@code{maxInt} are chosen more frequently than other integers, precisely
+because they are often ``boundary conditions.''  @xref{Generating test
+cases}.)
+
+At any rate, what is broken here is not really our implementation,
+but rather the specification of the property.  We need to limit it to
+odd integers that are less than @code{maxInt}.
+
+@transcript
+fun odd_not_max x = odd x andalso x < valOf(Int.maxInt);
+checkGen int ("odd+1=even", odd_not_max ==> even o succ)
+@end transcript
+
+@section Generating pairs of integers
+
+Other properties involve pairs of integers.  For example, the sum of
+two odd numbers is even.
+
+@transcript
+fun both_odd(x,y) = odd x andalso odd y
+fun sum_even(x,y) = even (x+y)
+fun show_pair(x,y) = Int.toString x ^","^ Int.toString y
+@end transcript
+
+@noindent
+QCheck includes not only generators for most primitive and aggregate
+data types, but also functions for combining them in various ways.
+To generate random pairs of integers, we ``zip'' together two integer
+generators.
+
+@transcript
+checkGen (Gen.zip(Gen.Int.int, Gen.Int.int), SOME show_pair)
+         ("odd+odd=even", both_odd ==> sum_even)
+@end transcript
+
+@noindent
+All of the counter-examples overflow the sum computation.  I'll leave
+fixing this specification as an exercise for the reader.
+
+Test cases need not be randomly generated.  Here is an example where
+the pairs will be taken from a list, but they could just as easily be
+read from a file.  @xref{Specifying test cases}.
+
+@transcript
+check (List.getItem, SOME show_pair)
+      ("sum_odds_even[]", both_odd ==> sum_even)
+      [(1,1), (3,5), (3,4), (* this one won't count! *)
+       (~1,1), (21,21), (7,13)]
+@end transcript
+
+@noindent
+I provided 6 pairs in the list, but only 5 counted because
+@code{(3,4)} did not meet the precondition of the property.
+
+@section The QCheck structure
+
+The examples in the preceding sections used several top-level functions
+from the @code{QCheck} structure.  Here, we will examine the signature
+of @code{QCheck}, beginning with its sub-structures.
+
+@include doc/QCHECK_SIG.texi
+
+@noindent
+The version information currently reported by @code{QCheck.version} is:
+@transcript
+QCheck.version;
+@end transcript
+
+@node Installation, Specifying test cases, Overview, Top
+@chapter Installation
+
+QCheck is designed to work with various implementations of Standard ML.
+At the time of release, it was built successfully on the following
+systems:
+@itemize
+@include doc/sml-ver.texi
+@end itemize
+@cindex compatibility
+@noindent
+Inquiries and recommendations on improving compatibility are welcome.
+The following sections provide simple installation instructions for each
+system.  A different @code{Makefile} is supplied for each system, but in
+all of them @command{make all} will produce the library and/or a test
+program, while @command{make test} will additionally run the test program.
+There is no @command{make install}, you must copy the files to an
+appropriate location by hand.  All makefiles are currently
+dependent on GNU make.
+
+@section SML/NJ
+@cindex SML/NJ
+@cindex Compilation Manager
+For Standard ML of New Jersey, the CM library specification
+@file{qcheck.cm} should be all you need.  The default target of
+@command{make -f Makefile.nj} will ask CM to build and stabilize this
+library.  This creates a file @file{.cm/x86-unix/qcheck.cm} (alter the
+arch/os tag as needed) which may be copied into the standard CM library
+path and added to the @file{pathconfig}.
+
+If you have multiple installations of SML/NJ, you may specify which one
+to use by providing its path on the @command{make} command line, like
+this:
+
+@example
+make -f Makefile.nj SML=~/nj49/bin/sml
+@end example
+
+@section Moscow ML
+@cindex Moscow ML
+Building for Moscow ML is a little trickier; I benefitted enormously
+from the Mosmake system by Henning Makhlom.  Typing
+
+@example
+make -f Makefile.moscow
+@end example
+@noindent
+will generate a bunch of @file{.uo} and @file{.ui} files in the
+@file{src/} directory.  To use them in an
+interactive setting, give the path as a @command{-I} argument to
+@command{mosml}, like this:
+@include doc/mosml.texi
+@noindent
+Or, copy all the @file{.uo} and @file{.ui} files to a different
+directory, and load them from there.
+
+Using the library in compiled programs is more complex.  Mosmake
+will be a big help, but you will still need to figure out the
+dependencies to particular modules within QCheck.  Moscow ML does not
+currently have a way to package together a set of object files into a
+single library.
+
+In addition to the default target,
+
+@example
+make -f Makefile.moscow all
+@end example
+@noindent
+creates a test program called @file{compose} in the source directory,
+and the @command{test} target additionally runs the test.  You may
+specify the location of the @command{mosmlc} compiler on the command
+line, in case the one you want to use is not first in your path:
+
+@example
+make -f Makefile.moscow MOSMLC=~/mosml/bin/mosmlc
+@end example
+
+@section MLton
+@cindex MLton
+MLton is a whole-program compiler, so you cannot install QCheck as a
+library in the traditional sense.  You may, however, compile its source
+code along with your own to produce test programs.  The QCheck license
+(LGPL) permits incorporating the source even into proprietary programs.
+
+The @code{qcheck.cm} file is intended to be readable by MLton as well as
+SML/NJ.
+
+@example
+make -f Makefile.mlton all
+@end example
+@noindent
+will ask MLton to compile a test program called @file{tests/tests}.  As
+always, the @command{test} target will run the test program.  You may
+specify the path to the MLton compiler by setting the @command{MLTON}
+variable on the command line.
+
+@section Poly/ML
+@cindex Poly/ML
+QCheck will also work with Poly/ML.  In this case, there is nothing to
+compile in advance, but @code{PolyML.make} will work if run from the
+@file{src/} directory, like this:
+@example
+OS.FileSys.chDir "src";
+PolyML.make "QCheck";
+@end example
+See also the file @file{tests/polytest.sml} for an example of how to
+use QCheck from Poly/ML.  Running
+@example
+make -f Makefile.poly test
+@end example
+will execute the unit tests for Poly/ML.
+
+@node Specifying test cases, Generating test cases, Installation, Top
+@chapter Specifying test cases
+
+@quotation
+Once a human tester finds a bug, it should be the last time a human
+tester finds that bug.  Automatic tests should check for it from then
+on.
+@end quotation
+@flushright
+Andrew Hunt and David Thomas
+@cite{The Pragmatic Programmer}
+@end flushright
+
+Random testing is neat, and sometimes uncovers interesting cases that
+you may not have tried.  But to be sure you are covering specific
+cases, you need to specify them somehow.  The list example at the end
+of the overview is one way, but another is reading them from a
+file.  QCheck provides a small API for using files within a directory
+or lines within a text file as test cases.
+
+@include doc/FILES_SIG.texi
+
+@node Generating test cases, Properties, Specifying test cases, Top
+@chapter Generating test cases
+
+The QuickCheck tool for Haskell uses type classes so that arbitrary
+values of various types may be generated behind the scenes.  In SML,
+we need to be more explicit, but the same holds true in Haskell if we
+don't want the default generator (positive integers only, for
+example).  The @code{Gen} module holds a wide range of tools for
+creating random values of various structured types and, yes, even
+functions!
+
+@include doc/APPLICATIVE_RNG.texi
+@include doc/GEN_TYPES.texi
+@include doc/PREGEN_SIG.texi
+@include doc/PRETEXT_GENERATOR.texi
+@include doc/INT_GENERATOR.texi
+@include doc/WORD_GENERATOR.texi
+@include doc/REAL_GENERATOR.texi
+@include doc/DATE_TIME_GENERATOR.texi
+
+@section Recursive types
+@cindex recursive types
+@cindex termination
+As pointed out in the QuickCheck paper, one needs to be careful when
+generating tree-structured data, due to the strong possibility of
+non-termination.  To avoid this problem, make the generator a function
+of a decreasing integer parameter.  When that parameter reaches zero,
+the only choice is to return a leaf.
+
+@transcript quiet
+datatype tree = Node of tree * tree | Leaf of int
+fun gentree 0 = Gen.map Leaf Gen.Int.int
+  | gentree n = 
+    Gen.choose' #[(1,Gen.map Leaf Gen.Int.int),
+                  (4,Gen.map Node (Gen.zip(gentree(n div 2),
+                                           gentree(n div 2))))]
+@end transcript
+
+@node Properties, Settings, Generating test cases, Top
+@chapter Properties
+@include doc/PROPERTY_SIG.texi
+
+@node Settings, Release notes, Properties, Top
+@chapter Settings
+@include doc/SETTINGS_SIG.texi
+
+@section Pluggable output styles
+
+The default output style (@code{PerlStyle.style}) is modeled after the
+unit-testing framework for Perl.  It makes room for statistics and
+counter-examples, while leaving clear a column down the middle where
+the "ok/FAILED" results can be easily read.  The Perl style uses the
+carriage return character \r to update the current line with each test
+-- this is a useful progress indicator for tests that take a long
+time.
+
+Output styles are completely configurable just by writing a function
+of a particular type.  An alternate style is provided, which is meant
+to mesh well with the output of the SML/NJ Compilation Manager (CM),
+like this:
+
+@example
+ @print{} [testing Bool/to-from... ok]
+ @print{} [testing Bool/from-to... ok]
+ @print{} [testing Bool/valid... FAILED]
+ @print{} Bool/valid:1.0 Error: False
+ @print{} Bool/valid:2.0 Error: True
+@end example
+To select this style, just do:
+@transcript quiet
+    Settings.set(Settings.style, CMStyle.style);
+@end transcript
+
+@node Release notes, License, Settings, Top
+@chapter Release notes
+@include doc/changes.texi
+
+@node License, Index, Release notes, Top
+@chapter GNU Lesser General Public License
+@include doc/copying.texi
+
+@node Index,  , License, Top
+@unnumbered Index
+@printindex cp
+
+@bye

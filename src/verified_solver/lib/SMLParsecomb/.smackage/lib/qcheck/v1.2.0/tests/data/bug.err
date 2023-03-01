@@ -1,3 +1,0 @@
-structure S = struct end
-(* Compiler should accept this program, but we named it ".err" just to
-   demonstrate a "failure" of this test case. *)

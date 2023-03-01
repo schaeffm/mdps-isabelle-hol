@@ -1,0 +1,275 @@
+remote: git git://github.com/standardml/bpltool.git
+provides: bpltool 1.0.0
+
+remote: git git://github.com/clf/celf.git
+provides: celf 2.7.0
+provides: celf 2.7.1
+provides: celf 2.7.2
+provides: celf 2.8.0
+provides: celf 2.9.0
+provides: celf 2.9.1
+provides: celf 2.9.2
+provides: celf 2.9.3
+
+remote: git git://github.com/standardml/cmlex.git
+provides: cmlex 1.0.0
+provides: cmlex 1.1.0
+
+remote: git git://github.com/standardml/cmlib.git
+provides: cmlib 0.0.1
+provides: cmlib 0.1.0
+provides: cmlib 0.2.0
+provides: cmlib 0.3.0
+provides: cmlib 0.3.1
+provides: cmlib 0.4.0
+provides: cmlib 0.5.0
+provides: cmlib 1.0.0
+provides: cmlib 1.0.1
+provides: cmlib 1.1.0
+provides: cmlib 1.1.1
+provides: cmlib 1.1.2
+provides: cmlib 1.2.0
+provides: cmlib 2.0.0
+provides: cmlib 2.0.1rc1
+provides: cmlib 2.1.0
+provides: cmlib 2.2.0
+provides: cmlib 2.3.0
+
+remote: git git://github.com/standardml/cmyacc.git
+provides: cmyacc 1.0.0
+provides: cmyacc 1.1.0
+
+remote: git git://github.com/robsimmons/l10.git
+provides: elton 0.1.0
+provides: elton 0.2.0
+provides: elton 0.3.0
+provides: elton 0.3.1
+provides: elton 0.3.2
+provides: elton 0.4.0
+provides: elton 0.4.1
+
+remote: git git://github.com/clf/llf.git
+
+remote: git git://github.com/clf/lollimon.git
+
+remote: git git://github.com/gian/smlnanomq.git
+provides: nanomq 1.0.0
+provides: nanomq 1.0.1
+
+remote: git git://github.com/clf/ollibot.git
+
+remote: git git://github.com/standardml/parcom.git
+provides: parcom 0.0.1
+provides: parcom 0.1.0
+provides: parcom 0.1.1
+provides: parcom 0.1.2
+provides: parcom 1.0.0
+provides: parcom 1.0.1
+provides: parcom 1.0.2
+provides: parcom 1.0.3
+provides: parcom 1.0.4
+provides: parcom 1.0.5
+provides: parcom 1.0.6
+provides: parcom 1.0.7
+
+remote: git git://github.com/mortenbp/PreML.git
+provides: preml 1.0.0
+provides: preml 1.1.0
+provides: preml 1.2.0
+provides: preml 1.3.0
+provides: preml 1.3.1
+provides: preml 1.3.2
+provides: preml 1.4.0
+provides: preml 1.4.1
+provides: preml 1.4.10
+provides: preml 1.4.11
+provides: preml 1.4.2
+provides: preml 1.4.3
+provides: preml 1.4.4
+provides: preml 1.4.5
+provides: preml 1.4.6
+provides: preml 1.4.7
+provides: preml 1.4.8
+provides: preml 1.4.9
+provides: preml 1.5.0
+provides: preml 1.5.1
+provides: preml 1.5.2
+provides: preml 1.5.3
+provides: preml 1.5.4
+provides: preml 1.6.0
+
+remote: git git://github.com/standardml/qcheck.git
+provides: qcheck 1.0.0rc1
+provides: qcheck 1.1.0
+provides: qcheck 1.2.0
+
+remote: git git://github.com/standardml/readline.git
+provides: readline 1.0.0
+provides: readline 1.0.1
+
+remote: git git://github.com/standardml/smackage.git
+provides: smackage 0.0.0
+provides: smackage 0.0.1
+provides: smackage 0.0.2
+provides: smackage 0.0.3
+provides: smackage 0.1.0
+provides: smackage 0.1.1
+provides: smackage 0.2.0
+provides: smackage 0.2.1
+provides: smackage 0.3.0
+provides: smackage 0.4.0
+provides: smackage 0.4.1
+provides: smackage 0.5.0
+provides: smackage 0.5.1
+provides: smackage 0.5.2
+provides: smackage 0.5.3
+provides: smackage 0.5.4
+provides: smackage 0.5.5alpha0
+provides: smackage 0.5.5alpha2
+provides: smackage 0.5.5alpha3
+provides: smackage 0.5.5alpha4
+provides: smackage 0.5.5alpha5
+provides: smackage 0.6.0
+provides: smackage 0.6.1
+provides: smackage 0.7.0
+provides: smackage 0.7.1
+provides: smackage 0.7.2
+provides: smackage 0.7.3
+provides: smackage 0.7.4
+provides: smackage 0.7.5
+provides: smackage 0.7.6
+provides: smackage 1.0.0
+provides: smackage 1.0.0alpha0
+provides: smackage 1.0.0alpha2
+provides: smackage 1.0.0alpha3
+provides: smackage 1.0.0alpha4
+provides: smackage 1.0.0alpha5
+provides: smackage 1.0.1
+provides: smackage 1.0.2
+provides: smackage 1.0.3
+provides: smackage 1.0.4
+provides: smackage 1.0.5
+provides: smackage 1.0.6
+provides: smackage 1.0.7
+provides: smackage 1.0.8
+provides: smackage 1.0.9
+provides: smackage 1.2.0
+provides: smackage 1.2.1
+provides: smackage 1.2.2
+provides: smackage 1.2.3
+provides: smackage 1.2.4
+provides: smackage 1.3.0
+provides: smackage 1.4.0
+provides: smackage 1.4.1
+
+remote: git git://github.com/finrod/smbt.git
+provides: smbt 0.2.0
+provides: smbt 0.2.1
+provides: smbt 0.2.2
+provides: smbt 0.2.3
+provides: smbt 0.2.4
+provides: smbt 0.2.5
+provides: smbt 0.2.6
+provides: smbt 0.2.7
+provides: smbt 0.2.8
+provides: smbt 0.3.0
+provides: smbt 0.3.1
+provides: smbt 0.3.2
+
+remote: git git://github.com/standardml/smlcgi.git
+provides: smlcgi 0.0.1
+provides: smlcgi 0.0.2
+provides: smlcgi 0.0.3
+
+remote: git git://github.com/standardml/SMLDoc.git
+provides: smldoc 0.9.0
+provides: smldoc 0.9.1
+
+remote: git git://github.com/standardml/smlnj-installer.git
+provides: smlnj 0.1.0
+provides: smlnj 0.1.1
+provides: smlnj 1.0.0
+provides: smlnj 1.0.1
+provides: smlnj 1.0.2
+
+remote: git git://github.com/standardml/SMLPEG.git
+provides: smlpeg 0.1.0
+provides: smlpeg 0.5.1
+provides: smlpeg 0.5.2
+
+remote: git git://github.com/standardml/SML-JSON.git
+provides: sml-json 0.0.3
+provides: sml-json 0.0.4
+
+remote: git git://github.com/robsimmons/sml-lib.git
+provides: tom7-lib 1.0.0
+
+remote: git git://github.com/standardml/twelf.git
+provides: twelf 1.7.0
+provides: twelf 1.7.1
+
+remote: git git://github.com/melsman/unicode.git
+provides: unicode 1.0.1
+provides: unicode 1.0.2
+provides: unicode 1.0.3
+provides: unicode 1.0.4
+
+remote: git https://github.com/finrod/uri.git
+provides: uri 0.1.0
+provides: uri 0.2.0
+
+remote: git git://github.com/standardml/smackage.git
+provides: smackage 0.0.0
+provides: smackage 0.0.1
+provides: smackage 0.0.2
+provides: smackage 0.0.3
+provides: smackage 0.1.0
+provides: smackage 0.1.1
+provides: smackage 0.2.0
+provides: smackage 0.2.1
+provides: smackage 0.3.0
+provides: smackage 0.4.0
+provides: smackage 0.4.1
+provides: smackage 0.5.0
+provides: smackage 0.5.1
+provides: smackage 0.5.2
+provides: smackage 0.5.3
+provides: smackage 0.5.4
+provides: smackage 0.5.5alpha0
+provides: smackage 0.5.5alpha2
+provides: smackage 0.5.5alpha3
+provides: smackage 0.5.5alpha4
+provides: smackage 0.5.5alpha5
+provides: smackage 0.6.0
+provides: smackage 0.6.1
+provides: smackage 0.7.0
+provides: smackage 0.7.1
+provides: smackage 0.7.2
+provides: smackage 0.7.3
+provides: smackage 0.7.4
+provides: smackage 0.7.5
+provides: smackage 0.7.6
+provides: smackage 1.0.0
+provides: smackage 1.0.0alpha0
+provides: smackage 1.0.0alpha2
+provides: smackage 1.0.0alpha3
+provides: smackage 1.0.0alpha4
+provides: smackage 1.0.0alpha5
+provides: smackage 1.0.1
+provides: smackage 1.0.2
+provides: smackage 1.0.3
+provides: smackage 1.0.4
+provides: smackage 1.0.5
+provides: smackage 1.0.6
+provides: smackage 1.0.7
+provides: smackage 1.0.8
+provides: smackage 1.0.9
+provides: smackage 1.2.0
+provides: smackage 1.2.1
+provides: smackage 1.2.2
+provides: smackage 1.2.3
+provides: smackage 1.2.4
+provides: smackage 1.3.0
+provides: smackage 1.4.0
+provides: smackage 1.4.1
+

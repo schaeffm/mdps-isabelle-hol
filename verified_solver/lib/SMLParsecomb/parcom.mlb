@@ -1,0 +1,38 @@
+(* Combinator parsing *)
+
+$(MLTON_ROOT)/basis/basis.mlb
+
+./.smackage/lib/cmlib/v2.3.0/cmlib.mlb
+
+(* Parcom proper *)
+local
+
+  src/parse.sig
+  src/parse.sml
+
+  src/charparse.sig
+  src/charparse.sml
+
+  src/tokparse.sig
+  src/tokparse.sml
+  src/langparse.sml
+
+in
+
+  signature PARSER_COMBINATORS
+  signature CHAR_PARSER
+  signature MINI_LANGUAGE_DEF
+  signature LANGUAGE_DEF
+  signature TOKEN_PARSER
+
+  structure ParserCombinators
+  structure CharParser
+  structure BasicParser
+
+
+  functor   TokenParser
+  functor   SimpleStyle
+  functor   JavaStyle
+  functor   MLStyle
+
+end

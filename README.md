@@ -3,32 +3,20 @@ This project provides
 - a formalization of solution algorithms for MDPs in Isabelle/HOL.
 - wrapper programs to parse MDPs and call the verified implementations.
 - a Rust implementation of Gauss-Seidel value iteration.
-- a Prism modification implementing discount factors.
 - example MDPs compiled from the International Planning Competition 2018.
 
-## Installation of Build Tools
-### MLton
-- Install [MLton](http://mlton.org/) from [here](https://github.com/MLton/mlton) (from binary package) or via the package manager of your system.
+## Build
+The SML code exported from Isabelle/HOL is provided as part of this project, thus exporting it is an optional step. If you do not want to replay the verification, start at step 5.
 
-### Isabelle (optional)
-- Install Isabelle 2021-1 from [here](https://isabelle.in.tum.de/installation.html)
-- Make sure to install TeXLive for Isabelle/LaTeX document preparation
-- Add the `isabelle` command to `PATH`, specifically `/path/to/installation/Isabelle2021-1/bin`.
-- Download the AFP (version for Isabelle 2021-1) from [here](https://www.isa-afp.org/download.html)
-- Follow the [instructions](https://www.isa-afp.org/using.html) to add it to Isabelle
+### Code Export from Isabelle/HOL (Optional)
+1. Install [Isabelle 2022](https://isabelle.in.tum.de/installation.html). Make sure to install TeXLive for Isabelle/LaTeX document preparation.
+2. Set the `ISABELLE` environment variable to the isabelle command, e.g. `export ISABELLE=/path/to/installation/Isabelle2022/bin/isabelle`.
+3. Download the AFP development version (commit 32990addc59858236e4b7816c2264c8dc9e08cbb) from [here](https://foss.heptapod.net/isa-afp/afp-devel/). Follow the [instructions](https://www.isa-afp.org/using.html) to add it to Isabelle
+4. Run `./export_code.sh` to build and export code (recommended: 16G of memory and a recent CPU).
 
-## Verified Solvers
-### Building
-- The SML code exported from Isabelle/HOL is provided as part of this project.
-- Thus exporting it is an optional step.
-
-#### Build Solvers + Export Code from Isabelle (optional)
-- To export the code yourself, first install Isabelle with the instructions above.
-- Then run `./build_with_export.sh`, to build (recommended: 16G of memory and a recent CPU)
-
-#### Build Solvers
-- run `./build.sh` to build the verified solver
-- the executables `MDP_Solver` and `MDP_Solver_Fin` are placed in `src/verified_solver/MDP_Solver`
+### Build Solver
+5. Install [MLton](http://mlton.org/) (Version 20210117) from [here](https://github.com/MLton/mlton) (from binary package) or via the package manager of your system.
+6. Run `./build.sh` to build the verified solver. The executables `MDP_Solver` and `MDP_Solver_Fin` are placed in the folder `verified_solver`.
 
 ### Running
 
@@ -103,7 +91,7 @@ The solver reports on the progress of parsing and converting the MDP to the repr
 ### Building
 - Install Rust (1.60) via [rustup](https://www.rust-lang.org/tools/install)
 - Run `./build_rust.sh`
-- The executable is placed at `src/rust_solver/target/release/solver_rust`
+- The executable is placed at `rust_solver/target/release/solver_rust`
 
 ### Running
 - Run `rust_solver FILE DISC EPS [OUTPUT]`
@@ -111,6 +99,3 @@ where
 - `FILE`, `DISC`, `EPS` work as described above
 - `OUTPUT` is an optional argument to output the state values of the solution line-by-line into the file `OUTPUT`
 - this file can then be passed to the verified infinite-horizon solver `MDP_Solver
-
-## PRISM
-Our modified PRISM variant can be found at `src/prism`.

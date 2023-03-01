@@ -1,4 +1,0 @@
-gen: basis rand ../../src/gen-{sig,base,text,int,word,date}
-strbag: ../../src/bag
-basis:
-rand: 

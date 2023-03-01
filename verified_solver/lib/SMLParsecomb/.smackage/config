@@ -1,0 +1,4 @@
+source lib/smackage/v1/sources
+compiler mlton
+compiler smlnj
+platform linux
